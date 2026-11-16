@@ -1,10 +1,8 @@
 # How the first pass is sized
 
-The second stage tells us what the first stage must drive. M12's gate is the first-stage output, $`V_X`$. Once M12 has a size and a quiescent gate voltage, we know where $`V_X`$ should sit. The bias network comes last because its mirrors reproduce currents and device sizes chosen for the core. All sizes below are drawn $`W/L`$ in µm. The worked example uses the defaults in [config.py](config.py).
-
 ## Amplifier core
 
-**1. Turn the specifications into currents and transconductances.** The example uses $`C_c=0.5`$ pF, $`C_L=1`$ pF, a 20 MHz unity-gain design target, 45° phase margin and 20 V/µs on each edge. During a slew, assume $`V_X`$ moves slowly compared with the output. The tail must steer enough current to charge or discharge $`C_c`$. On a rising edge M13 must also charge $`C_L`$.
+**1. Turn the specifications into currents and transconductances.** The [default configuration](config.py) uses $`C_c=0.5`$ pF, $`C_L=1`$ pF, a 20 MHz unity-gain design target, 45° phase margin and 20 V/µs on each edge. During a slew, assume $`V_X`$ moves slowly compared with the output. The tail must steer enough current to charge or discharge $`C_c`$. On a rising edge M13 must also charge $`C_L`$.
 
 ```math
 I_{11}^{\ast}=C_c\max(S_\uparrow,S_\downarrow)=10\,\mu\mathrm{A},
@@ -20,7 +18,7 @@ G_{m1}^{\ast}=2\pi f_u C_c=62.83\,\mu\mathrm{S},
 
 The star marks a design target. $`G_{m1}`$ is the effective transconductance of the whole first stage. $`g_{m12}`$ belongs to one transistor. The initial Miller nulling resistor is $`1/g_{m12}^{\ast}=7.96`$ kΩ.
 
-**2. Select M12, then use its operating point to size the PMOS load.** M12 carries the second-stage DC current. Look near 30 µA in each saturated NMOS sweep, trying the shortest length first and then the smallest width. **M12 = 2/1** meets the transconductance target. Its row gives $`g_m=188.45`$ µS, $`r_o=1.047`$ MΩ and $`V_X=V_{GS12}=0.75`$ V.
+**2. Select M12, then use its operating point to size the PMOS load.** M12 carries the second-stage DC current. Look near 30 µA in each saturated NMOS sweep, trying the shortest length first and then the smallest width. **M12 = 2/1** ($`W/L`$ in µm throughout) meets the transconductance target. Its row gives $`g_m=188.45`$ µS, $`r_o=1.047`$ MΩ and $`V_X=V_{GS12}=0.75`$ V.
 
 For 23 dB of second-stage gain, $`g_{m12}(r_{o12}\parallel r_{o13})`$ must reach $`10^{23/20}`$. With M12 chosen, M13 needs at least 80.74 kΩ. M13 shares its gate and source with M3/M4, so select the three at **one** $`V_{SG}`$. At 0.88 V, **M3/M4 = 2/1 each** supply 10.31 µA each, and **M13 = 6/1** supplies 32.13 µA with 921 kΩ. The 3:1 width ratio follows from this example's branch currents. Changing the load changes the required output current.
 
